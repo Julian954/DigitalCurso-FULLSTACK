@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Enlaza aquí tu archivo de estilos CSS -->
+</head>
+<body>
+    <header>
+        <h1>Bienvenidos a la Landing Page</h1>
+        <img src="img\img1.svg" with= "200" height="100" alt="Logo de la empresa">
+    </header>
+    <main>
+        <section class="hero">
+            <img src="img\img2.svg" with= "100" height="100"alt="Banner promocional">
+            <h2>¡Descubre cómo mejorar tus finanzas!</h2>
+            <p>Aprende consejos valiosos y conceptos financieros importantes para tu emprendimiento.</p>
+            <a href="#contacto" class="btn">Contactar</a>
+        </section>
+        <section class="about">
+            <h2>Sobre Nosotros</h2>
+            <p>Somos un equipo comprometido en brindarte la mejor experiencia en educación financiera.</p>
+        </section>
+        <section id="contacto" class="contact">
+            <h2>Contacto</h2>
+            <form action="#" method="post">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="mensaje">Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+        </section>
+        <section id="garantia" class="guarantee">
+            <h2>Garantía de Satisfacción</h2>
+            <p>Estamos seguros de la calidad de nuestro curso. Si por alguna razón no estás satisfecho con tu compra, te ofrecemos una garantía de devolución del dinero dentro de los primeros 30 días.</p>
+            <p>¡Tu satisfacción es nuestra prioridad!</p>
+        </section>
+    </main>
+    <footer>
+        <p>Síguenos en:</p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/tucuenta" target="_blank"><img src="facebook-icon.svg" alt="Facebook"></a>
+            <a href="https://twitter.com/tucuenta" target="_blank"><img src="twitter-icon.svg" alt="Twitter"></a>
+            <a href="https://www.instagram.com/tucuenta" target="_blank"><img src="instagram-icon.svg" alt="Instagram"></a>
+        </div>
+        <p>&copy; 2024 Finanzas para Emprendedores</p>
+    </footer>
+</body>
+</html>
