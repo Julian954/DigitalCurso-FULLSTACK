@@ -11,6 +11,10 @@
     // GLPI API Application Token
     $GLPI_API_APP_TOKEN = "4ZvghnWdF4DmnlpYxrKLAP5KySnPNmnMrGf5rp36";
     // Request headers for GLPI API requests
+
+    // NOMBRE DE LA UBICACION 
+    $LocatName = "JC MINERÍA";
+
     $headers = array(
         "Content-Type: application/json"
     );
@@ -32,6 +36,77 @@
     $sessionToken2 = json_decode($sessionToken2, true);
     $sessionToken2 = $sessionToken2['session_token'];
 
+
+    //Peticion de Location
+    $headers = array(
+        "Content-Type: application/json"
+    );
+
+    $url =$GLPI_API_URL . "/Location?session_token=" . $sessionToken2 . "&app_token=" . $GLPI_API_APP_TOKEN . "&range=0-15000";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $response = curl_exec($ch);
+
+    if ($response === false) {
+        echo "Error en la solicitud cURL: " . curl_error($ch);
+    } else {
+        // Verificar si hubo algún error en la respuesta
+        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($http_status !== 200) {
+            echo 'Error al realizar la solicitud: HTTP ' . $http_status;
+        } else {
+            // Decodificar la respuesta JSON
+            $locations = json_decode($response, true);
+
+            // Verificar si la decodificación fue exitosa
+            if ($locations === null) {
+                echo 'Error al decodificar la respuesta JSON';
+            } else {
+                // Buscar el ID de la entidad por su nombre
+                $UbiId = findLocationIdByName($locations,$LocatName);
+                if ($UbiId === null) {
+                    echo 'No se encontró la entidad por el nombre especificado';
+                }
+            }
+        }
+    }
+
+    curl_close($ch);
+
+    /**
+     * Find Location ID by name.
+     * Returns Location id if match else null.
+     * @param array $locations 
+     * @return int|null
+     */
+    function findLocationIdByName($locations,$LocatName) {
+        // Si no se encuentra la entidad, devuelve el id de la entidad "Infraestructura de Terceros" que es la default
+        foreach ($locations as $locat) {
+            if (like_match('%'. $LocatName .'%',$locat['name']) == 1) {
+                return $locat['id'];
+            }
+        }
+        return null; // Si no se encuentra la entidad por defecto
+    }
+
+    /**
+     * SQL Like operator in PHP.
+     * Returns TRUE if match else FALSE.
+     * @param string $pattern (comparacion)
+     * @param string $subject (string a comparar)
+     * @return bool
+     */
+    function like_match($pattern, $subject)
+    {
+        $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
+        return (bool) preg_match("/^{$pattern}$/i", $subject);
+    }
+
+    echo "El id de la ubicacion es: " . $UbiId;
+
 //Peticion de creacion de ticket
 
     $headers = array(
@@ -40,18 +115,18 @@
 
     $data = array(
         "input" => array(
-            "name" => "22-04-pruebas",         //Titulo
+            "name" => "22-04-pruebas Con Locations",         //Titulo
             "entitie" => "5",           //ID Entidad (Terceros)
             "date" => $currentDateTime, //Fecha
             "status" => "1",            //ID Estado (Nuevo)
-            "content" => "poop",   //Descripcion
+            "content" => "boba",   //Descripcion
             "urgency" => "3",           //ID Urgencia
             "impact" => "3",            //ID Impacto
             "priority" => "3",          //ID Prioridad
             "type" => "2",              //ID tipo 
             "requesttype" => "9",       //ID Origen
             "itilcategory" => "25",     //ID Categoria
-            "locations_id" => "5"    //ID Tercero
+            "locations_id" => $UbiId    //ID Tercero
         )
     );
 
