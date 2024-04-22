@@ -2,7 +2,7 @@
 // Verificar si el evento es una creación de ticket
     
     $currentDateTime = date("Y-m-d H:i:s");
-    $apimessage = 'Tawk Ticket Id: ' . $ticket_id . PHP_EOL . $message;
+    //$apimessage = 'Tawk Ticket Id: ' . $ticket_id . PHP_EOL . $message;
     
     // GLPI API REST Endpoint URL
     $GLPI_API_URL = "https://demoglpi.alsainformatica.com.mx/apirest.php";
@@ -32,67 +32,6 @@
     $sessionToken2 = json_decode($sessionToken2, true);
     $sessionToken2 = $sessionToken2['session_token'];
 
-//Peticion de Location
-
-    $headers = array(
-        "Content-Type: application/json"
-    );
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_URL, $GLPI_API_URL . "/Location?session_token=" . $sessionToken2 . "&app_token=" . $GLPI_API_APP_TOKEN . "&range=0-10000");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    
-    $response = curl_exec($ch);
-    if ($response === false) {
-        echo "Error en la solicitud cURL: " . curl_error($ch);
-    } else {
-    }
-
-    // Verificar si hubo algún error
-    if (curl_error($ch)) {
-        echo 'Error al realizar la solicitud: ' . curl_error($ch);
-    } else {
-        // Decodificar la respuesta JSON
-        $locations = json_decode($response, true);
-        // Buscar el ID de la entidad por su nombre
-        $UbiId = findLocationIdByName($locations);
-    }
-    curl_close($ch);
-
-
-    /**
-    * Find Location ID by name.
-    * Returns Location id if match else null.
-    * @param array $locations 
-    * @return int
-    */
-    function findLocationIdByName($locations) {
-        $reqname = "ACCE";
-        // Si no se encuentra la entidad, devuelve el id de la entidad "Infraestructura de Terceros" que es la default
-        foreach ($locations as $locat) {
-            if (like_match('%'. $reqname .'%',$locat['name']) == 1) {
-                return $locat['id'];
-            }
-        }
-        return null; // Si no se encuentra la entidad por defecto
-    }
-
-    /**
-     * SQL Like operator in PHP.
-     * Returns TRUE if match else FALSE.
-     * @param string $pattern (comparacion)
-     * @param string $subject (string a comparar)
-     * @return bool
-     */
-    function like_match($pattern, $subject)
-    {
-        $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
-        return (bool) preg_match("/^{$pattern}$/i", $subject);
-    }
-
-
 //Peticion de creacion de ticket
 
     $headers = array(
@@ -101,7 +40,7 @@
 
     $data = array(
         "input" => array(
-            "name" => "amumu",         //Titulo
+            "name" => "22-04-pruebas",         //Titulo
             "entitie" => "5",           //ID Entidad (Terceros)
             "date" => $currentDateTime, //Fecha
             "status" => "1",            //ID Estado (Nuevo)
@@ -112,7 +51,7 @@
             "type" => "2",              //ID tipo 
             "requesttype" => "9",       //ID Origen
             "itilcategory" => "25",     //ID Categoria
-            "locations_id" => $UbiId    //ID Tercero
+            "locations_id" => "5"    //ID Tercero
         )
     );
 

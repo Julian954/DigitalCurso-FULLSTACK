@@ -239,3 +239,75 @@
 </body>
 
 </html>
+
+<?php 
+//Peticion de Location
+$headers = array(
+    "Content-Type: application/json"
+);
+
+$url =$GLPI_API_URL . "/Location?session_token=" . $sessionToken2 . "&app_token=" . $GLPI_API_APP_TOKEN . "&range=0-10000";
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$response = curl_exec($ch);
+
+if ($response === false) {
+    echo "Error en la solicitud cURL: " . curl_error($ch);
+} else {
+    // Verificar si hubo algún error en la respuesta
+    $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($http_status !== 200) {
+        echo 'Error al realizar la solicitud: HTTP ' . $http_status;
+    } else {
+        // Decodificar la respuesta JSON
+        $locations = json_decode($response, true);
+
+        // Verificar si la decodificación fue exitosa
+        if ($locations === null) {
+            echo 'Error al decodificar la respuesta JSON';
+        } else {
+            // Buscar el ID de la entidad por su nombre
+            $UbiId = findLocationIdByName($locations);
+            if ($UbiId === null) {
+                echo 'No se encontró la entidad por el nombre especificado';
+            }
+        }
+    }
+}
+
+curl_close($ch);
+
+/**
+ * Find Location ID by name.
+ * Returns Location id if match else null.
+ * @param array $locations 
+ * @return int|null
+ */
+function findLocationIdByName($locations) {
+    $reqname = "ACCE";
+    // Si no se encuentra la entidad, devuelve el id de la entidad "Infraestructura de Terceros" que es la default
+    foreach ($locations as $locat) {
+        if (like_match('%'. $reqname .'%',$locat['name']) == 1) {
+            return $locat['id'];
+        }
+    }
+    return null; // Si no se encuentra la entidad por defecto
+}
+
+/**
+ * SQL Like operator in PHP.
+ * Returns TRUE if match else FALSE.
+ * @param string $pattern (comparacion)
+ * @param string $subject (string a comparar)
+ * @return bool
+ */
+function like_match($pattern, $subject)
+{
+    $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
+    return (bool) preg_match("/^{$pattern}$/i", $subject);
+}
+
+?>
